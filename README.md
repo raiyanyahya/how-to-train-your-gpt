@@ -8,6 +8,7 @@
   <img src="https://img.shields.io/badge/code%20commented-100%25-brightgreen" alt="100% commented">
   <img src="https://img.shields.io/badge/prerequisite-python%20basics-orange" alt="Python basics only">
   <img src="https://img.shields.io/badge/architecture-LLaMA%203%20style-purple" alt="LLaMA 3 style">
+  <img src="https://img.shields.io/badge/purpose-learning%20only-lightgrey" alt="Learning only">
 </p>
 
 ---
