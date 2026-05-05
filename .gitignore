@@ -1,2 +1,5 @@
 .ipynb_checkpoints/
 checkpoints/
+__pycache__/
+*.pyc
+loss_curve.png

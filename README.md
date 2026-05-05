@@ -119,8 +119,8 @@ python -m venv gpt_env
 source gpt_env/bin/activate          # Mac/Linux
 # gpt_env\Scripts\activate           # Windows
 
-# 3. Install dependencies
-pip install torch tiktoken datasets numpy matplotlib
+# 3. Install dependencies (CPU version — for GPU see below)
+pip install torch tiktoken datasets numpy matplotlib --index-url https://download.pytorch.org/whl/cpu
 
 # 4. Verify GPU (optional but recommended)
 python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}')"
@@ -158,7 +158,7 @@ We're going to run this whole project on a very small dataset so you can watch t
 
 ```bash
 # Install everything you need
-pip install jupyter tiktoken torch numpy datasets matplotlib
+pip install jupyter tiktoken torch numpy datasets matplotlib --index-url https://download.pytorch.org/whl/cpu
 
 # Start with chapter 2 (tokenization)
 jupyter notebook notebooks/02_tokenization.ipynb
