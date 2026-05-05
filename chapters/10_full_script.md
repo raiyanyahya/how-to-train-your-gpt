@@ -129,39 +129,6 @@ if __name__ == "__main__":
     main()
 ```
 
-## Expected Output
-
-```
-How to Train Your GPT -- Starting up!
-
-GPU: NVIDIA GeForce RTX 3090
-Memory: 24.0 GB
-
-Loading training data...
-Loading dataset: wikitext-103-raw-v1...
-Loaded 5,000 documents
-Total tokens in dataset: 2,847,231
-
-Creating model...
-GPT initialized with 13,408,512 parameters
-   Total parameters: 13,408,512
-   Trainable: 13,408,512
-
-============================================================
-STARTING TRAINING
-============================================================
-Training starting!
-  Model: 13,408,512 parameters
-  Device: cuda
-  Effective batch: 8
-============================================================
-
-Step      1/5,000 | Loss: 10.8451 | LR: 7.50e-08 | Time: 2s
-Step    100/5,000 | Loss: 6.2345  | LR: 1.50e-05 | Time: 45s
-Step    200/5,000 | Loss: 5.1234  | LR: 3.00e-05 | Time: 90s
-...
-```
-
 ## Running the Training
 
 ```bash

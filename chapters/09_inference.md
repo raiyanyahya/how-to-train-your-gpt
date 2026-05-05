@@ -234,7 +234,7 @@ def load_checkpoint(checkpoint_path: str, device: torch.device):
     """
     # WHAT: Load the checkpoint dictionary from disk
     # WHY: map_location ensures it loads to the right device (CPU/GPU)
-    checkpoint = torch.load(checkpoint_path, map_location=device)
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
 
     # WHAT: Recreate the model from the saved config
     model = GPT(checkpoint["config"])
