@@ -1,6 +1,8 @@
 # 🧠 How to Train Your GPT
 
 > *A guide to building a world-class language model from absolute scratch. Taught like you're five. Built like you're an engineer.*
+>
+> *I made this with the goal of learning something I didn't understand completely. Specifically the attention part. I use AI a lot to understand key concepts and verifying them.*
 
 <p align="center">
   <img src="https://img.shields.io/badge/chapters-12-blue" alt="12 chapters">
