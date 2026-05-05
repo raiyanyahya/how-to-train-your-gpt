@@ -230,7 +230,7 @@ class RotaryPositionalEmbedding(nn.Module):
         """
         WHAT: Apply RoPE to queries or keys.
 
-        Input:  [batch, seq_len, num_heads, head_dim]
+        Input:  [batch, num_heads, seq_len, head_dim]
                 x can be either Q or K (NOT V — values don't need position)
         Output: Same shape, rotated by position-dependent angles
 
