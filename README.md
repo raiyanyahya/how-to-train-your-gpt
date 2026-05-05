@@ -148,6 +148,24 @@ Step 50,000/50,000 | Loss: 2.8901 | LR: 1.00e-05 | Toks/sec: 44,800
 
 ---
 
+## 📓 Jupyter Notebooks
+
+Alongside the textbook, each chapter has a companion notebook you can run live. These strip away the explanations and give you pure, clean code that executes from top to bottom. If the textbook teaches you why, the notebooks let you see it happen.
+
+We're going to run this whole project on a very small dataset so you can watch training happen in minutes rather than weeks. Every notebook is self-contained — open it, run all cells, and you'll see the model learn in real time.
+
+```bash
+# Install everything you need
+pip install jupyter tiktoken torch numpy datasets matplotlib
+
+# Start with chapter 2 (tokenization)
+jupyter notebook notebooks/02_tokenization.ipynb
+```
+
+Notebooks live in the `notebooks/` directory, one per chapter. Open any of them and hit **Cell → Run All**.
+
+---
+
 ## 📖 How to Read
 
 Each chapter follows the same **4-step structure**:
