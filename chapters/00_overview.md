@@ -63,7 +63,7 @@ By the end of this guide, you will have built from scratch:
 | **RoPE** | Teaches the model about word order using rotation | [4](04_positional_encoding.md) |
 | **Attention** | Lets words "look at" and "talk to" each other | [5](05_attention.md) |
 | **Transformer Block** | Complete thinking unit: attention + feed-forward + residuals | [6](06_transformer_block.md) |
-| **GPT Model** | Full 124M parameter language model | [7](07_gpt_model.md) |
+| **GPT Model** | Full 151M parameter language model (with SwiGLU) | [7](07_gpt_model.md) |
 | **Training Pipeline** | Data loading, AdamW, cosine schedule, mixed precision | [8](08_training.md) |
 | **Inference Engine** | Text generation with temperature, top-k, top-p, KV cache | [9](09_inference.md) |
 | **Complete Script** | One file that trains and generates — runnable start to finish | [10](10_full_script.md) |

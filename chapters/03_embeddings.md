@@ -28,8 +28,8 @@ This is the most famous example of what embeddings can capture:
 
 ```python
 # In a well-trained embedding space:
-embedding("king")  - embedding("man")  + embedding("woman")
-≈ embedding("queen")
+# embedding("king") - embedding("man") + embedding("woman")
+# ≈ embedding("queen")
 ```
 
 **Why does this work?** "King" has two components in meaning-space:

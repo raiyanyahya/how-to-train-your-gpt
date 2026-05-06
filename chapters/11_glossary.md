@@ -14,7 +14,7 @@ graph TD
         R1 --> N2["RMSNorm"]
         N2 --> F["SwiGLU FFN<br/>d_model -> 4x -> d_model"]
         F --> R2(("+"))
-        R2 --> R2
+        R1 --> R2
     end
 
     L --> FN["Final RMSNorm"]
@@ -39,7 +39,7 @@ graph TD
 
 ## Parameter Count Breakdown
 
-For our 124M model (GPT-2 Small equivalent):
+For our 151M model (LLaMA-style with SwiGLU):
 
 ```
 Token Embedding:  vocab_size x d_model = 50,257 x 768 = 38,597,376
@@ -58,9 +58,11 @@ Per Transformer Block (12 total):
 Final RMSNorm:                 =       768
 LM Head: shared with embedding =         0 (weight tying!)
 
-Grand Total: 38,597,376 + 113,264,640 + 768 = ~152M... (with expansion=4)
+Grand Total: 38,597,376 + 113,264,640 + 768 = 151,862,784 parameters
 
-With weight tying and standard attention: ~124M parameters
+For comparison: a standard GPT-2 (without SwiGLU, using GELU FFN)
+would have ~124M parameters. SwiGLU adds about 28M extra parameters
+by replacing 2 FFN weight matrices with 3 gated ones.
 ```
 
 ## What You've Built

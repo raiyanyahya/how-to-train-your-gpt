@@ -76,9 +76,9 @@ This is why long-context inference needs enormous GPU memory or memory-efficient
 ### KV Cache Implementation Concept
 
 ```python
-# Simplified KV cache (conceptual - not full implementation)
+# Simplified KV cache (conceptual — not full implementation)
 class GPTWithKVCache(GPT):
-    def generate_with_cache(self, input_ids, max_new_tokens, ...):
+    def generate_with_cache(self, input_ids, max_new_tokens):
         # Prefill: process prompt, store K,V
         kv_cache = []  # List of (K, V) tuples per layer
         
@@ -121,17 +121,17 @@ Scale logits before softmax. Lower temperature = sharper distribution (more conf
 logits = [2.0, 1.0, 0.5, 0.1]  # 4 possible tokens
 
 # T = 0.5 (cold — confident):
-scaled = [2.0/0.5, 1.0/0.5, 0.5/0.5, 0.1/0.5] = [4.0, 2.0, 1.0, 0.2]
-probs  = softmax([4.0, 2.0, 1.0, 0.2]) = [0.86, 0.12, 0.02, 0.00]
+scaled = [2.0/0.5, 1.0/0.5, 0.5/0.5, 0.1/0.5]  # → [4.0, 2.0, 1.0, 0.2]
+probs  = softmax([4.0, 2.0, 1.0, 0.2])          # → [0.86, 0.12, 0.02, 0.00]
 # Token 0 has 86% chance — very confident!
 
 # T = 1.0 (standard):
-probs = softmax([2.0, 1.0, 0.5, 0.1]) = [0.56, 0.21, 0.13, 0.10]
+probs = softmax([2.0, 1.0, 0.5, 0.1])           # → [0.56, 0.21, 0.13, 0.10]
 # Token 0 = 56% — balanced distribution
 
 # T = 2.0 (hot — creative):
-scaled = [2.0/2.0, 1.0/2.0, 0.5/2.0, 0.1/2.0] = [1.0, 0.5, 0.25, 0.05]
-probs  = softmax([1.0, 0.5, 0.25, 0.05]) = [0.36, 0.22, 0.22, 0.20]
+scaled = [2.0/2.0, 1.0/2.0, 0.5/2.0, 0.1/2.0]  # → [1.0, 0.5, 0.25, 0.05]
+probs  = softmax([1.0, 0.5, 0.25, 0.05])         # → [0.36, 0.22, 0.22, 0.20]
 # Flatter — token 0 only 36%, tokens 2 and 3 are competitive
 ```
 

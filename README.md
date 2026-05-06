@@ -61,7 +61,7 @@ Most ML tutorials fall into one of two traps:
 | **[4: Positional Encoding](chapters/04_positional_encoding.md)** | RoPE: why LLaMA rotates vectors, not adds numbers |
 | **[5: Attention](chapters/05_attention.md)** | ⭐ THE CORE. Q,K,V, scaling, causal mask, 8-step walkthrough |
 | **[6: Transformer Block](chapters/06_transformer_block.md)** | RMSNorm, SwiGLU, residuals, pre-norm vs post-norm |
-| **[7: Complete GPT Model](chapters/07_gpt_model.md)** | 124M parameter model, weight tying, logits explained |
+| **[7: Complete GPT Model](chapters/07_gpt_model.md)** | 151M parameter model (with SwiGLU), weight tying, logits explained |
 | **[8: Training Pipeline](chapters/08_training.md)** | Cross-entropy, backprop, AdamW, cosine warmup, mixed precision |
 | **[9: Inference](chapters/09_inference.md)** | KV cache, temperature, top-k/p, beam search, repetition penalty |
 | **[10: Full Script](chapters/10_full_script.md)** | Runnable `main.py`: everything in one file |
@@ -80,7 +80,7 @@ Most ML tutorials fall into one of two traps:
 | **RoPE** | ~70 | Why LLaMA rotates vectors instead of adding position numbers |
 | **Multi-Head Attention** | ~120 | The exact 8-step computation behind every modern LLM |
 | **Transformer Block** | ~50 | Why residual connections are the "gradient highway" |
-| **Full GPT Model** | ~200 | 124M parameter model with weight tying and pre-norm |
+| **Full GPT Model** | ~200 | 151M parameter model with SwiGLU, weight tying and pre-norm |
 | **Training Pipeline** | ~250 | AdamW, cosine warmup, mixed precision, gradient accumulation |
 | **Inference Engine** | ~80 | KV cache, temperature, top-k/p, beam search |
 
@@ -129,24 +129,15 @@ python -c "import torch; print(f'CUDA: {torch.cuda.is_available()}')"
 open chapters/00_overview.md
 ```
 
-To run the full training script, copy `chapters/10_full_script.md` to `main.py` and run:
+Run the training script:
 
 ```bash
 python main.py
 ```
 
-**📊 Expected output (RTX 3090, ~2 hours):**
-```
-GPT initialized with 124,439,808 parameters
-Training starting!
-Step    100/50,000 | Loss: 6.2345 | LR: 1.50e-05 | Toks/sec: 45,000
-Step    200/50,000 | Loss: 5.1234 | LR: 3.00e-05 | Toks/sec: 45,200
-...
-Step 50,000/50,000 | Loss: 2.8901 | LR: 1.00e-05 | Toks/sec: 44,800
-✅ Training complete! 112.3 min | Best loss: 2.8901
-```
+This uses the tiny config (d_model=256, 4 layers) by default. Training takes a few minutes on CPU. For the GPT-2 scale config (151M params, 768 dims, 12 layers), edit the config in main.py and uncomment the larger configuration.
 
-> 💻 **On CPU only** (~10-50× slower): Use the "tiny" config in [Chapter 10](chapters/10_full_script.md).
+> 💻 The default config uses a tiny model (d_model=256, 4 layers, 17M params) that runs in minutes on CPU. For the full GPT-2 scale (151M params, 768 dims, 12 layers), edit the config in `main.py` and uncomment the larger configuration. You'll need a GPU for that one.
 
 ---
 
@@ -237,7 +228,7 @@ Each chapter follows the same **4-step structure**:
     ├── 📍 04_positional_encoding.md ← RoPE math, numerical example, theta
     ├── 🧠 05_attention.md    ← ⭐ THE CORE (713 lines). Q,K,V, scaling, causal mask
     ├── 🧱 06_transformer_block.md ← RMSNorm, SwiGLU, residuals, pre-norm vs post
-    ├── 🏗️ 07_gpt_model.md    ← Complete 124M model, weight tying, logits explained
+    ├── 🏗️ 07_gpt_model.md    ← Complete 151M model, weight tying, logits explained
     ├── 🏋️ 08_training.md     ← Cross-entropy, backprop, AdamW, cosine warmup
     ├── 🎤 09_inference.md    ← KV cache, temperature, top-k/p, beam search
     ├── 📜 10_full_script.md  ← Runnable main.py

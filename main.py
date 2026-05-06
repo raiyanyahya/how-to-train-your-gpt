@@ -179,7 +179,7 @@ class GPT(nn.Module):
         return sum(p.numel() for p in self.parameters())
 
     @torch.no_grad()
-    def generate(self, input_ids, max_new_tokens, temperature=1.0, top_k=None):
+    def generate(self, input_ids, max_new_tokens, temperature=1.0, top_k=None, top_p=None):
         self.eval()
         for _ in range(max_new_tokens):
             if input_ids.shape[1] > self.config.max_seq_len:
@@ -189,6 +189,14 @@ class GPT(nn.Module):
             if top_k is not None:
                 v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
                 logits[logits < v[:, -1:]] = float('-inf')
+            if top_p is not None:
+                sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+                cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
+                sorted_mask = cumulative_probs > top_p
+                sorted_mask[:, 1:] = sorted_mask[:, :-1].clone()
+                sorted_mask[:, 0] = False
+                mask = sorted_mask.scatter(1, sorted_indices, sorted_mask)
+                logits[mask] = float('-inf')
             probs = F.softmax(logits, dim=-1)
             next_token = torch.multinomial(probs, num_samples=1)
             input_ids = torch.cat([input_ids, next_token], dim=1)
