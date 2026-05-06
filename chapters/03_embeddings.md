@@ -98,13 +98,13 @@ These "directions" aren't assigned by humans. They emerge from the geometry of l
 Our embedding code multiplies by `sqrt(d_model)`. Why?
 
 ```python
-embeddings = self.embed(x)           # Values are ~N(0, 1)
-embeddings = embeddings * sqrt(768)  # Now values are ~N(0, 768)
+embeddings = self.embed(x)           # Values are ~N(0, 0.02) from init
+embeddings = embeddings * sqrt(768)  # Now values are ~N(0, 0.55)
 ```
 
-**The problem:** After embedding, we add positional encoding. Typical positional encoding values are small (cos/sin values between -1 and 1). If embeddings are also small (~N(0,1)), the positional signal gets **drowned out** by the embedding signal.
+**The problem:** After embedding, we combine with positional encoding. Positional encoding values (cos/sin) are between -1 and 1. GPT embeddings are initialized very small (~N(0, 0.02), giving values mostly between -0.04 and 0.04). Without scaling, the embedding values are ~25× smaller than the positional values. The positional signal would **drown out** the word meaning.
 
-**The fix:** Scale embeddings up so they're at a similar magnitude. After adding positional encoding and passing through LayerNorm/RMSNorm, the overall variance is controlled. But in the *relative* sense, scaling ensures position matters.
+**The fix:** Scale embeddings up by sqrt(d_model) so they reach a comparable magnitude to the positional encoding. Both signals can then contribute to the representation.
 
 ```python
 # Without scaling:
@@ -209,10 +209,10 @@ class Embedding(nn.Module):
         embeddings = self.embed(x)  # [batch, seq_len, d_model]
 
         # WHAT: Scale by sqrt(d_model)
-        # WHY: See explanation above. Without this, positional information
-        #      would be dwarfed by the embedding magnitudes after addition.
-        #      The factor sqrt(d_model) keeps the variance at roughly d_model
-        #      instead of 1.0, making embeddings and positions comparable.
+        # WHY: See explanation above. Without this, embedding values
+        #      would be dwarfed by the positional encoding values.
+        #      sqrt(d_model) scales embeddings from ~N(0, 0.02) to ~N(0, sqrt(d_model)*0.02),
+        #      making them comparable to positional values in [-1, 1].
         return embeddings * math.sqrt(self.d_model)
 ```
 
