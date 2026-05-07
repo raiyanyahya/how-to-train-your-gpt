@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/chapters-12-blue" alt="12 chapters">
-  <img src="https://img.shields.io/badge/lines-3%2C671-green" alt="3,671 lines">
+  <img src="https://img.shields.io/badge/lines-3%2C900%2B-green" alt="3,900+ lines">
   <img src="https://img.shields.io/badge/code%20commented-100%25-brightgreen" alt="100% commented">
   <img src="https://img.shields.io/badge/prerequisite-python%20basics-orange" alt="Python basics only">
   <img src="https://img.shields.io/badge/architecture-LLaMA%203%20style-purple" alt="LLaMA 3 style">
@@ -17,7 +17,7 @@
 
 ## 📖 What Is This?
 
-This is a **12-chapter, 3,671-line interactive textbook** that teaches you how to build, train and run a modern language model from absolute scratch. The same family of architecture behind ChatGPT, Claude, LLaMA and Mistral.
+This is a **12-chapter, 3,900+ line interactive textbook** that teaches you how to build, train and run a modern language model from absolute scratch. The same family of architecture behind ChatGPT, Claude, LLaMA and Mistral.
 
 You won't just read about Transformers. You'll **write every line yourself**: tokenizer, embeddings, attention, training loop, inference engine. Every single line annotated to explain **what** it does and **why** it's there.
 
@@ -42,7 +42,7 @@ Most ML tutorials fall into one of two traps:
 | 🧑‍💻 You Are... | 📚 You Need... |
 |---|---|
 | A Python developer curious about how ChatGPT actually works | Basic Python (functions, classes, lists). No ML experience |
-| A student who wants to deeply understand Transformers | Willingness to read ~3,600 lines of commented code |
+| A student who wants to deeply understand Transformers | Willingness to read ~3,500 lines of commented code |
 | An engineer evaluating LLM architectures | Understanding of tradeoffs (RoPE vs learned, RMSNorm vs LayerNorm) |
 | Someone who got lost at "attention" in other tutorials | Party analogy + worked numeric example with real numbers |
 
@@ -84,7 +84,7 @@ Most ML tutorials fall into one of two traps:
 | **Training Pipeline** | ~250 | AdamW, cosine warmup, mixed precision, gradient accumulation |
 | **Inference Engine** | ~80 | KV cache, temperature, top-k/p, beam search |
 
-> 💎 **~860 lines of core model code, ~2,800 lines of explanation and diagrams**
+> 💎 **~860 lines of core model code, ~2,600 lines of explanation and diagrams**
 
 ---
 
