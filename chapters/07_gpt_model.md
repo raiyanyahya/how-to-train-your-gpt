@@ -198,8 +198,7 @@ class GPT(nn.Module):
             Target: [cat,  sat,  on,   the,  mat,  ?]
             Predict: P(cat|The) P(sat|The,cat) ... P(mat|The,cat,sat,on,the)
 
-            We slice logits[:, :-1] (drop last) and targets[:, 1:] (drop first)
-            to align predictions with what comes next.
+The dataset already provides shifted targets so we compute loss on all positions.
         """
         batch_size, seq_len = input_ids.shape
 
@@ -249,95 +248,12 @@ class GPT(nn.Module):
             #                                        ^
             #                                   We drop this
             #                                   (no target for it)
-            logits_flat = logits[:, :-1, :].contiguous().view(
+            logits_flat = logits.contiguous().view(
                 -1, self.config.vocab_size
-            )  # [batch*(seq-1), vocab_size]
-            targets_flat = targets[:, 1:].contiguous().view(
+            )
+            targets_flat = targets.contiguous().view(
                 -1
-            )  # [batch*(seq-1)]
-
-            # WHAT: Cross-entropy loss
-            # WHY: For each prediction, -log(P(correct_token)).
-            #      Averaged over all predictions in the batch.
-            #      Lower loss = more confident correct predictions.
-            loss = F.cross_entropy(logits_flat, targets_flat)
-
-        return logits, loss
-
-    @torch.no_grad()
-    def generate(
-        self,
-        input_ids: torch.Tensor,
-        max_new_tokens: int,
-        temperature: float = 1.0,
-        top_k: int = None,
-        top_p: float = None,
-    ) -> torch.Tensor:
-        """
-        WHAT: Generate new text token by token (autoregressive).
-        WHY: During inference, we generate one token, append it,
-             then generate the next. Each token depends on all
-             previously generated tokens.
-
-        @torch.no_grad(): WHY this decorator is critical:
-            During training, PyTorch builds a computation graph
-            tracking every operation — this enables backpropagation
-            but consumes memory.
-            During inference, we DON'T need gradients. @torch.no_grad()
-            disables the computation graph, saving ~50% GPU memory
-            and making generation ~2x faster.
-
-        Sampling parameters:
-            temperature: Controls randomness.
-                         < 1.0 = focused/deterministic
-                         = 1.0 = natural distribution
-                         > 1.0 = creative/wild
-
-            top_k: Only sample from the K most likely tokens.
-                   e.g., top_k=50 means "consider only top 50 tokens"
-
-            top_p: Nucleus sampling. Keep the smallest set of tokens
-                   whose cumulative probability ≥ top_p.
-                   e.g., top_p=0.9 means "keep tokens until we have
-                   90% of the probability mass"
-        """
-        # WHAT: Switch model to evaluation mode
-        # WHY: Disables dropout. During training, dropout randomly
-        #      silences neurons for regularization. During generation,
-        #      we want ALL neurons active for consistent output.
-        self.eval()
-
-        for _ in range(max_new_tokens):
-            # ===== CROP IF TOO LONG =====
-            # WHAT: If the sequence exceeds max_seq_len, keep only
-            #       the most recent tokens
-            # WHY: The model has a fixed max context window.
-            if input_ids.shape[1] > self.config.max_seq_len:
-                input_ids = input_ids[:, -self.config.max_seq_len:]
-
-            # ===== FORWARD PASS =====
-            # WHAT: Get predictions for the next token
-            # WHY: logits[:, -1, :] takes ONLY the last position.
-            #      We only care about what comes NEXT, not about
-            #      past positions we've already generated.
-            logits, _ = self.forward(input_ids)
-            logits = logits[:, -1, :]  # [batch, vocab_size]
-
-            # ===== APPLY TEMPERATURE =====
-            logits = logits / temperature
-
-            # ===== TOP-K FILTERING =====
-            # WHAT: Keep only K most likely tokens, mask the rest
-            if top_k is not None:
-                v, _ = torch.topk(logits, min(top_k, logits.size(-1)))
-                logits[logits < v[:, -1:]] = float('-inf')
-
-            # ===== TOP-P (NUCLEUS) FILTERING =====
-            # WHAT: Keep smallest set of tokens with cumulative prob > top_p
-            if top_p is not None:
-                sorted_logits, sorted_indices = torch.sort(
-                    logits, descending=True
-                )
+            )
                 cumulative_probs = torch.cumsum(
                     F.softmax(sorted_logits, dim=-1), dim=-1
                 )

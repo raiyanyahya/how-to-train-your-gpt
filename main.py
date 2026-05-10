@@ -20,7 +20,7 @@ class RotaryPositionalEmbedding(nn.Module):
         inv_freq = 1.0 / (theta ** (dim_indices / d_model))
         positions = torch.arange(max_seq_len).float()
         freqs = torch.outer(positions, inv_freq)
-        emb = torch.cat([freqs, freqs], dim=-1)
+        emb = freqs.repeat_interleave(2, dim=-1)
         self.register_buffer("cos_cached", emb.cos())
         self.register_buffer("sin_cached", emb.sin())
 
@@ -170,8 +170,8 @@ class GPT(nn.Module):
         logits = self.lm_head(x)
         loss = None
         if targets is not None:
-            logits_flat = logits[:, :-1, :].contiguous().view(-1, self.config.vocab_size)
-            targets_flat = targets[:, 1:].contiguous().view(-1)
+            logits_flat = logits.contiguous().view(-1, self.config.vocab_size)
+            targets_flat = targets.contiguous().view(-1)
             loss = F.cross_entropy(logits_flat, targets_flat)
         return logits, loss
 

@@ -93,27 +93,22 @@ Direction 4 (192-255): Formality — formal vs casual
 
 These "directions" aren't assigned by humans. They emerge from the geometry of language. The model discovers that it's useful to cluster related concepts together because they appear in similar contexts.
 
-## Why sqrt(d_model) Scaling?
+## A note on scaling
 
-Our embedding code multiplies by `sqrt(d_model)`. Why?
+GPT-2 and GPT-3 multiply embeddings by `sqrt(d_model)`. This is needed
+when you ADD positional encodings to embeddings because the two signals
+must have comparable magnitude. Position values from sin/cos are between
+-1 and 1 while freshly initialized embeddings are much smaller.
+
+We use RoPE instead. RoPE does not add position information. It rotates
+the query and key vectors. Rotation preserves vector magnitude so there
+is no problem of one signal drowning out the other. Following LLaMA's
+convention we do not apply any scaling to the embeddings in our code.
+The embedding layer just looks up the vector and returns it.
 
 ```python
 embeddings = self.embed(x)           # Values are ~N(0, 0.02) from init
-embeddings = embeddings * sqrt(768)  # Now values are ~N(0, 0.55)
-```
-
-**The problem:** After embedding, we combine with positional encoding. Positional encoding values (cos/sin) are between -1 and 1. GPT embeddings are initialized very small (~N(0, 0.02), giving values mostly between -0.04 and 0.04). Without scaling, the embedding values are ~25× smaller than the positional values. The positional signal would **drown out** the word meaning.
-
-**The fix:** Scale embeddings up by sqrt(d_model) so they reach a comparable magnitude to the positional encoding. Both signals can then contribute to the representation.
-
-```python
-# Without scaling:
-embedding = [0.01, -0.02, 0.01]    # Tiny
-position  = [0.84, 0.54, -1.00]    # Much larger — position dominates!
-
-# With scaling:
-embedding = [0.28, -0.55, 0.28]    # Scaled up
-position  = [0.84, 0.54, -1.00]    # Same magnitude — both matter
+# No scaling needed with RoPE — LLaMA and Mistral do not scale embeddings
 ```
 
 ## What Determines Embedding Quality?
@@ -181,9 +176,6 @@ class Embedding(nn.Module):
         #          return self.weight[x]  # index into the weight matrix
         self.embed = nn.Embedding(vocab_size, d_model)
 
-        # WHAT: Cache d_model for the scaling step
-        self.d_model = d_model
-
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         WHAT: Look up embeddings for each token ID in the input.
@@ -208,12 +200,11 @@ class Embedding(nn.Module):
         #      lookup operation — very fast, even for 50K+ vocabulary.
         embeddings = self.embed(x)  # [batch, seq_len, d_model]
 
-        # WHAT: Scale by sqrt(d_model)
-        # WHY: See explanation above. Without this, embedding values
-        #      would be dwarfed by the positional encoding values.
-        #      sqrt(d_model) scales embeddings from ~N(0, 0.02) to ~N(0, sqrt(d_model)*0.02),
-        #      making them comparable to positional values in [-1, 1].
-        return embeddings * math.sqrt(self.d_model)
+        # WHAT: Return embeddings unchanged
+        # WHY: We use RoPE for position encoding. RoPE rotates rather
+        #      than adds, so no scaling is needed. LLaMA and Mistral
+        #      follow this same convention.
+        return embeddings
 ```
 
 ## Quick Mind-Test

@@ -197,7 +197,7 @@ class RotaryPositionalEmbedding(nn.Module):
         # WHAT: Duplicate to full dimension
         # WHY: Each dim pair (2i, 2i+1) gets the same angle,
         #      so we copy each angle: [θ0, θ1, θ2, ...] -> [θ0, θ0, θ1, θ1, ...]
-        emb = torch.cat([freqs, freqs], dim=-1)         # [max_seq_len, d_model]
+        emb = freqs.repeat_interleave(2, dim=-1)         # [max_seq_len, d_model]
 
         # WHAT: Cache cos and sin for all positions
         # WHY: register_buffer means these move with model.to(device)
