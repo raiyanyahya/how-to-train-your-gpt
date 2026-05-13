@@ -6,7 +6,8 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/chapters-12-blue" alt="12 chapters">
-  <img src="https://img.shields.io/badge/lines-3%2C900%2B-green" alt="3,900+ lines">
+  <img src="https://img.shields.io/badge/lines-7%2C500%2B-green" alt="7,500+ lines">
+  <img src="https://img.shields.io/badge/topics_explained-15-teal" alt="15 topic explainers">
   <img src="https://img.shields.io/badge/code%20commented-100%25-brightgreen" alt="100% commented">
   <img src="https://img.shields.io/badge/prerequisite-python%20basics-orange" alt="Python basics only">
   <img src="https://img.shields.io/badge/architecture-LLaMA%203%20style-purple" alt="LLaMA 3 style">
@@ -17,7 +18,9 @@
 
 ## 📖 What Is This?
 
-This is a **12-chapter, 3,900+ line interactive textbook** that teaches you how to build, train and run a modern language model from absolute scratch. The same family of architecture behind ChatGPT, Claude, LLaMA and Mistral.
+This is a **12-chapter, 7,500+ line interactive textbook** that teaches you how to build, train and run a modern language model from absolute scratch. The same family of architecture behind ChatGPT, Claude, LLaMA and Mistral.
+
+Alongside the chapters there are **15 standalone topic explainers** covering every technique in depth. RoPE, attention, RMSNorm, SwiGLU, KV cache, AdamW, mixed precision and more. Each explainer follows the same style: child language, no jargon, a code example you can run.
 
 You won't just read about Transformers. You'll **write every line yourself**: tokenizer, embeddings, attention, training loop, inference engine. Every single line annotated to explain **what** it does and **why** it's there.
 
@@ -119,7 +122,7 @@ python -m venv gpt_env
 source gpt_env/bin/activate          # Mac/Linux
 # gpt_env\Scripts\activate           # Windows
 
-# 3. Install dependencies (CPU version — for GPU see below)
+# 3. Install dependencies (CPU version. For GPU see below)
 pip install torch tiktoken datasets numpy matplotlib --index-url https://download.pytorch.org/whl/cpu
 
 # 4. Verify GPU (optional but recommended)
@@ -145,7 +148,7 @@ This uses the tiny config (d_model=256, 4 layers) by default. Training takes a f
 
 Alongside the textbook, each chapter has a companion notebook you can run live. These strip away the explanations and give you pure, clean code that executes from top to bottom. If the textbook teaches you why, the notebooks let you see it happen.
 
-We're going to run this whole project on a very small dataset so you can watch training happen in minutes rather than weeks. Every notebook is self-contained — open it, run all cells, and you'll see the model learn in real time.
+We're going to run this whole project on a very small dataset so you can watch training happen in minutes rather than weeks. Every notebook is self-contained. Open it, run all cells and you'll see the model learn in real time.
 
 ```bash
 # Install everything you need
@@ -156,6 +159,31 @@ jupyter notebook notebooks/02_tokenization.ipynb
 ```
 
 Notebooks live in the `notebooks/` directory, one per chapter. Open any of them and hit **Cell → Run All**.
+
+---
+
+## 📚 Topic Explainers
+
+Each concept in this guide has a dedicated deep dive inside `explanations and examples WIP/`. These are written in the simplest possible language. No jargon. No formulas before analogies. Every explainer covers what, where, why, when and how with a code example you can run.
+
+| Topic | File | What It Covers |
+|---|---|---|
+| RoPE | [rope.md](explanations%20and%20examples%20WIP/rope.md) | How word order is encoded through rotation |
+| Attention | [attention.md](explanations%20and%20examples%20WIP/attention.md) | Step by step with a 3-token worked example |
+| BPE Tokenization | [bpe_tokenization.md](explanations%20and%20examples%20WIP/bpe_tokenization.md) | How text becomes tokens |
+| Embeddings | [embeddings.md](explanations%20and%20examples%20WIP/embeddings.md) | How numbers become meaning |
+| RMSNorm | [rmsnorm.md](explanations%20and%20examples%20WIP/rmsnorm.md) | Simpler faster normalization |
+| SwiGLU | [swiglu.md](explanations%20and%20examples%20WIP/swiglu.md) | The gated activation that beat ReLU |
+| Causal Masking | [causal_masking.md](explanations%20and%20examples%20WIP/causal_masking.md) | No peeking at the future |
+| Residual Connections | [residual_connections.md](explanations%20and%20examples%20WIP/residual_connections.md) | The gradient highway |
+| KV Cache | [kv_cache.md](explanations%20and%20examples%20WIP/kv_cache.md) | Making generation fast |
+| Sampling | [sampling.md](explanations%20and%20examples%20WIP/sampling.md) | Temperature, top-k, top-p |
+| Mixed Precision | [mixed_precision.md](explanations%20and%20examples%20WIP/mixed_precision.md) | Speed without sacrifice |
+| AdamW | [adamw.md](explanations%20and%20examples%20WIP/adamw.md) | The optimizer that trains LLMs |
+| Weight Tying | [weight_tying.md](explanations%20and%20examples%20WIP/weight_tying.md) | Two jobs one matrix |
+| Gradient Clipping | [gradient_clipping.md](explanations%20and%20examples%20WIP/gradient_clipping.md) | Preventing training explosions |
+| Cosine Warmup | [cosine_warmup.md](explanations%20and%20examples%20WIP/cosine_warmup.md) | The learning rate schedule |
+| Pre-Norm | [pre_norm.md](explanations%20and%20examples%20WIP/pre_norm.md) | Where to normalize |
 
 ---
 
@@ -220,19 +248,23 @@ Each chapter follows the same **4-step structure**:
 ```
 📦 how-to-train-your-gpt/
 ├── 📄 README.md              ← You are here
-└── 📂 chapters/
-    ├── 🏠 00_overview.md     ← What is a GPT? Why build one?
-    ├── 🔧 01_setup.md        ← Install tools, GPU vs CPU, venv basics
-    ├── 🔪 02_tokenization.md ← BPE walkthrough, EOS tokens, emoji handling
-    ├── 🧊 03_embeddings.md   ← How numbers become meaning, king − man + woman
-    ├── 📍 04_positional_encoding.md ← RoPE math, numerical example, theta
-    ├── 🧠 05_attention.md    ← ⭐ THE CORE (713 lines). Q,K,V, scaling, causal mask
-    ├── 🧱 06_transformer_block.md ← RMSNorm, SwiGLU, residuals, pre-norm vs post
-    ├── 🏗️ 07_gpt_model.md    ← Complete 151M model, weight tying, logits explained
-    ├── 🏋️ 08_training.md     ← Cross-entropy, backprop, AdamW, cosine warmup
-    ├── 🎤 09_inference.md    ← KV cache, temperature, top-k/p, beam search
-    ├── 📜 10_full_script.md  ← Runnable main.py
-    └── 📊 11_glossary.md     ← Architecture provenance, parameter breakdown
+├── 🐍 main.py                ← Runnable training script (clone & run)
+├── 📂 chapters/
+│   ├── 🏠 00_overview.md     ← What is a GPT? Why build one?
+│   ├── 🔧 01_setup.md        ← Install tools, GPU vs CPU, venv basics
+│   ├── 🔪 02_tokenization.md ← BPE walkthrough, EOS tokens, emoji handling
+│   ├── 🧊 03_embeddings.md   ← How numbers become meaning, king − man + woman
+│   ├── 📍 04_positional_encoding.md ← RoPE math, numerical example, theta
+│   ├── 🧠 05_attention.md    ← ⭐ THE CORE (713 lines). Q,K,V, scaling, causal mask
+│   ├── 🧱 06_transformer_block.md ← RMSNorm, SwiGLU, residuals, pre-norm vs post
+│   ├── 🏗️ 07_gpt_model.md    ← Complete 151M model, weight tying, logits explained
+│   ├── 🏋️ 08_training.md     ← Cross-entropy, backprop, AdamW, cosine warmup
+│   ├── 🎤 09_inference.md    ← KV cache, temperature, top-k/p, beam search
+│   ├── 📜 10_full_script.md  ← About main.py
+│   └── 📊 11_glossary.md     ← Architecture provenance, parameter breakdown
+├── 📓 notebooks/             ← Jupyter notebooks (one per chapter)
+├── 📚 explanations and examples WIP/ ← Standalone explainers (15 topics)
+└── 📄 CONTRIBUTING.md
 ```
 
 ---
