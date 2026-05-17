@@ -419,7 +419,7 @@ def train(model, train_dataset, config, device, save_dir="checkpoints"):
             loss = loss / config.grad_accum_steps
 
             # ===== BACKWARD: Calculate how to improve =====
-            if use_amp and scaler is not None:
+            if scaler:
                 scaler.scale(loss).backward()
             else:
                 loss.backward()
@@ -428,11 +428,11 @@ def train(model, train_dataset, config, device, save_dir="checkpoints"):
 
             # ===== UPDATE: Every grad_accum_steps, optimize =====
             if (batch_idx + 1) % config.grad_accum_steps == 0:
-                if use_amp and scaler is not None:
+                if scaler:
                     scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
 
-                if use_amp and scaler is not None:
+                if scaler:
                     scaler.step(optimizer); scaler.update()
                 else:
                     optimizer.step()

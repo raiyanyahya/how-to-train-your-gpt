@@ -328,15 +328,15 @@ def train(model, train_dataset, config, device, steps=500):
             with torch.amp.autocast('cuda', enabled=use_amp):
                 _, loss = model(input_ids, target_ids)
             loss = loss / config.grad_accum_steps
-            if use_amp and scaler is not None:
+            if scaler:
                 scaler.scale(loss).backward()
             else:
                 loss.backward()
             if (batch_idx + 1) % config.grad_accum_steps == 0:
-                if use_amp and scaler is not None:
+                if scaler:
                     scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-                if use_amp and scaler is not None:
+                if scaler:
                     scaler.step(optimizer)
                     scaler.update()
                 else:
