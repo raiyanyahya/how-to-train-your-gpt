@@ -7,7 +7,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/chapters-12-blue" alt="12 chapters">
   <img src="https://img.shields.io/badge/lines-7%2C500%2B-green" alt="7,500+ lines">
-  <img src="https://img.shields.io/badge/topics_explained-15-teal" alt="15 topic explainers">
+  <img src="https://img.shields.io/badge/topics_explained-18-teal" alt="18 topic explainers">
   <img src="https://img.shields.io/badge/code%20commented-100%25-brightgreen" alt="100% commented">
   <img src="https://img.shields.io/badge/prerequisite-python%20basics-orange" alt="Python basics only">
   <img src="https://img.shields.io/badge/architecture-LLaMA%203%20style-purple" alt="LLaMA 3 style">
@@ -20,7 +20,7 @@
 
 This is a **12-chapter, 7,500+ line interactive textbook** that teaches you how to build, train and run a modern language model from absolute scratch. The same family of architecture behind ChatGPT, Claude, LLaMA and Mistral.
 
-Alongside the chapters there are **15 standalone topic explainers** covering every technique in depth. RoPE, attention, RMSNorm, SwiGLU, KV cache, AdamW, mixed precision and more. Each explainer follows the same style: child language, no jargon, a code example you can run.
+Alongside the chapters there are **18 standalone topic explainers** covering every technique in depth. RoPE, attention, RMSNorm, SwiGLU, KV cache, AdamW, mixed precision and more. Plus two narrative walkthroughs that trace a single sentence through the entire model step by step. Each file follows the same style: child language, no jargon, a code example you can run.
 
 You won't just read about Transformers. You'll **write every line yourself**: tokenizer, embeddings, attention, training loop, inference engine. Every single line annotated to explain **what** it does and **why** it's there.
 
@@ -166,6 +166,8 @@ Notebooks live in the `notebooks/` directory, one per chapter. Open any of them 
 
 Each concept in this guide has a dedicated deep dive inside `explanations and examples WIP/`. These are written in the simplest possible language. No jargon. No formulas before analogies. Every explainer covers what, where, why, when and how with a code example you can run.
 
+The last two files are narrative walkthroughs. A Token's Journey follows one sentence through the entire model. The Complete Story covers every component across 22 parts. Read these after the chapters to see how everything connects.
+
 | Topic | File | What It Covers |
 |---|---|---|
 | RoPE | [rope.md](explanations%20and%20examples%20WIP/rope.md) | How word order is encoded through rotation |
@@ -184,6 +186,8 @@ Each concept in this guide has a dedicated deep dive inside `explanations and ex
 | Gradient Clipping | [gradient_clipping.md](explanations%20and%20examples%20WIP/gradient_clipping.md) | Preventing training explosions |
 | Cosine Warmup | [cosine_warmup.md](explanations%20and%20examples%20WIP/cosine_warmup.md) | The learning rate schedule |
 | Pre-Norm | [pre_norm.md](explanations%20and%20examples%20WIP/pre_norm.md) | Where to normalize |
+| 📖 **A Token's Journey** | [a_tokens_journey.md](explanations%20and%20examples%20WIP/a_tokens_journey.md) | Follow one sentence through every layer |
+| 📖 **The Complete Story** | [the_complete_story.md](explanations%20and%20examples%20WIP/the_complete_story.md) | The full narrative: 22 parts, 7800 words |
 
 ---
 
