@@ -125,3 +125,69 @@ forgetting where the model loses its general abilities. The quality
 improvement over LoRA is marginal for most tasks. Full fine-tuning is
 the right tool only when you are building foundation models or need
 the absolute maximum performance regardless of cost.
+
+## A full fine-tuning training loop
+
+Here is what a full fine-tuning loop looks like. Compare it with the
+LoRA notebook. The only differences are that every parameter is
+trainable not just a few adapters and the learning rate is smaller.
+
+```python
+import torch
+from torch.utils.data import DataLoader
+
+model = load_pretrained_model()
+model.train()
+
+# All parameters are trainable in full fine-tuning
+for param in model.parameters():
+    param.requires_grad = True
+
+optimizer = torch.optim.AdamW(
+    model.parameters(),
+    lr=2e-5,           # Smaller LR than LoRA
+    weight_decay=0.1,
+    betas=(0.9, 0.95),
+)
+
+# Training loop identical to pretraining
+for epoch in range(num_epochs):
+    for batch in dataloader:
+        input_ids, target_ids = batch
+
+        with torch.amp.autocast('cuda', dtype=torch.bfloat16):
+            logits = model(input_ids)
+            loss = F.cross_entropy(
+                logits.view(-1, vocab_size),
+                target_ids.view(-1),
+            )
+
+        loss.backward()
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        optimizer.step()
+        optimizer.zero_grad()
+
+        if step % 100 == 0:
+            print(f"Step {step}: loss = {loss.item():.4f}")
+
+# Save the full model checkpoint
+torch.save({
+    "model_state_dict": model.state_dict(),
+    "optimizer_state_dict": optimizer.state_dict(),
+}, "fine_tuned_model.pt")
+```
+
+Notice the learning rate. Two e minus five instead of three e minus
+four used in pretraining. The model is close to a good solution. Large
+steps would destroy its pretrained knowledge. Small steps refine its
+behavior.
+
+Notice also that every parameter is trainable. The optimizer stores two
+states per parameter. For a seven billion parameter model that means
+fifty six gigabytes just for the optimizer. This is why full
+fine-tuning needs multiple GPUs.
+
+Compare this with the LoRA notebook where only 0.19 percent of the
+parameters are trainable. The training loop is the same. The optimizer
+is the same. The only difference is how many parameters are updated.
+LoRA updates a few. Full fine-tuning updates all of them.

@@ -73,6 +73,91 @@ Most weights are near zero and get high precision. The few outlier
 weights at the extremes get lower precision. This matches the actual
 distribution of pretrained model weights.
 
+## A tiny code example
+
+Here is a simplified version of how QLoRA quantizes and dequantizes
+weights during training.
+
+```python
+import torch
+
+def quantize_4bit(weights, block_size=64):
+    """
+    Quantize a weight matrix to 4 bits.
+    Works on blocks of weights for better accuracy.
+    """
+    out_features, in_features = weights.shape
+    quantized = torch.zeros(out_features, in_features // 2, dtype=torch.uint8)
+
+    for i in range(0, out_features):
+        for j_start in range(0, in_features, block_size):
+            j_end = min(j_start + block_size, in_features)
+            block = weights[i, j_start:j_end]
+
+            # Find min and max of this block
+            w_min = block.min()
+            w_max = block.max()
+
+            # Quantize to 4 bits (16 levels)
+            scale = (w_max - w_min) / 15.0
+            zero_point = -w_min / scale
+
+            quantized_block = torch.clamp(
+                torch.round(block / scale + zero_point), 0, 15
+            ).to(torch.uint8)
+
+            # Pack two 4-bit values into one 8-bit byte
+            for j in range(0, len(quantized_block), 2):
+                byte_idx = j_start // 2 + j // 2
+                high = quantized_block[j] << 4
+                low = quantized_block[j + 1] if j + 1 < len(quantized_block) else 0
+                quantized[i, byte_idx] = high | low
+
+    return quantized
+
+
+def dequantize_4bit(quantized, original_shape, block_size=64):
+    """
+    Reconstruct approximate float values from 4-bit quantized weights.
+    This simplified version does not store scales per block.
+    In real QLoRA the scale and zero point are stored alongside.
+    """
+    out_features, packed_in_features = quantized.shape
+    in_features = packed_in_features * 2
+    reconstructed = torch.zeros(out_features, min(in_features, original_shape[1]))
+
+    for i in range(out_features):
+        for j in range(0, min(in_features, original_shape[1]), 2):
+            byte_idx = j // 2
+            packed = quantized[i, byte_idx].item()
+            high = (packed >> 4) & 0xF
+            low = packed & 0xF
+            if j < original_shape[1]:
+                reconstructed[i, j] = float(high)
+            if j + 1 < original_shape[1]:
+                reconstructed[i, j + 1] = float(low)
+
+    return reconstructed
+
+
+# Example: quantize and dequantize a small weight matrix
+weights = torch.randn(4, 16) * 0.5
+quantized = quantize_4bit(weights, block_size=8)
+reconstructed = dequantize_4bit(quantized, weights.shape, block_size=8)
+
+# In real QLoRA the scale and offset per block are stored
+# so reconstructed values are much closer to originals
+print(f"Original shape: {weights.shape}")
+print(f"Quantized shape: {quantized.shape}")
+print(f"Compression ratio: {weights.numel() * 4 / quantized.numel():.1f}x")
+```
+
+In a real QLoRA implementation the scale and zero point are stored
+alongside the quantized values for each block. During dequantization
+the integer values are converted back using their block specific scale
+and zero point. This gives much higher accuracy than the simplified
+version above which loses the per block metadata.
+
 ## Double quantization
 
 QLoRA applies a second round of quantization to the quantization
@@ -135,6 +220,47 @@ within a few percent on standard benchmarks.
 8 GB GPU (RTX 2070):
   LoRA: fine-tune up to ~1B models
   QLoRA: fine-tune up to ~3B models
+```
+
+## A real QLoRA training snippet
+
+Using the popular bitsandbytes library which implements QLoRA.
+
+```python
+import torch
+from transformers import AutoModelForCausalLM, BitsAndBytesConfig
+
+# Configure 4-bit quantization
+bnb_config = BitsAndBytesConfig(
+    load_in_4bit=True,
+    bnb_4bit_quant_type="nf4",            # NormalFloat4
+    bnb_4bit_compute_dtype=torch.bfloat16, # Compute in bfloat16
+    bnb_4bit_use_double_quant=True,        # Enable double quantization
+)
+
+# Load a 7B model in 4-bit (~4 GB instead of ~14 GB)
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-7b-hf",
+    quantization_config=bnb_config,
+    device_map="auto",
+)
+
+# Add LoRA on top (using peft library)
+from peft import LoraConfig, get_peft_model
+
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    target_modules=["q_proj", "v_proj"],
+    lora_dropout=0.05,
+)
+
+model = get_peft_model(model, lora_config)
+model.print_trainable_parameters()
+# Output: trainable params: 8,388,608 || all params: 6,746,726,400 || trainable%: 0.12%
+
+# Now train as usual. Only the LoRA params update.
+# The 4-bit base model stays frozen.
 ```
 
 ## What you need to remember
