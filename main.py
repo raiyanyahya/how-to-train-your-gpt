@@ -265,7 +265,7 @@ class TextDataset(Dataset):
 
 def load_training_data(max_samples=None):
     print("Loading dataset: wikitext-103-raw-v1...")
-    dataset = load_dataset("wikitext", "wikitext-103-raw-v1", split="train")
+    dataset = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1", split="train")
     texts = [item["text"] for item in dataset if item["text"].strip()]
     if max_samples:
         texts = texts[:max_samples]
