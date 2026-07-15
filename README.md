@@ -7,7 +7,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/chapters-12-blue" alt="12 chapters">
   <img src="https://img.shields.io/badge/lines-7%2C500%2B-green" alt="7,500+ lines">
-  <img src="https://img.shields.io/badge/topics_explained-27-teal" alt="27 topic explainers">
+  <img src="https://img.shields.io/badge/topics_explained-28-teal" alt="28 topic explainers">
   <img src="https://img.shields.io/badge/code%20commented-100%25-brightgreen" alt="100% commented">
   <img src="https://img.shields.io/badge/prerequisite-python%20basics-orange" alt="Python basics only">
   <img src="https://img.shields.io/badge/architecture-LLaMA%203%20style-purple" alt="LLaMA 3 style">
@@ -23,7 +23,7 @@
 
 This is a **12-chapter, 7,500+ line interactive textbook** that teaches you how to build, train and run a modern language model from absolute scratch. The same family of architecture behind ChatGPT, Claude, LLaMA and Mistral.
 
-Alongside the chapters there are **27 standalone topic explainers** covering every technique in depth. RoPE, attention, RMSNorm, SwiGLU, KV cache, AdamW, mixed precision and more. Plus two narrative walkthroughs that trace a single sentence through the entire model step by step. Each file follows the same style: child language, no jargon, a code example you can run.
+Alongside the chapters there are **28 standalone topic explainers** covering every technique in depth. RoPE, attention, RMSNorm, SwiGLU, KV cache, AdamW, mixed precision and more. Plus two narrative walkthroughs that trace a single sentence through the entire model step by step. Each file follows the same style: child language, no jargon, a code example you can run.
 
 You won't just read about Transformers. You'll **write every line yourself**: tokenizer, embeddings, attention, training loop, inference engine. Every single line annotated to explain **what** it does and **why** it's there.
 
@@ -198,6 +198,7 @@ The last two files are narrative walkthroughs. A Token's Journey follows one sen
 | Mixture of Experts | [mixture_of_experts.md](explanations%20and%20examples%20WIP/mixture_of_experts.md) | How MoE scales models with sparse routing |
 | Speculative Decoding | [speculative_decoding.md](explanations%20and%20examples%20WIP/speculative_decoding.md) | 2-3× faster generation with a draft model |
 | Perplexity | [perplexity.md](explanations%20and%20examples%20WIP/perplexity.md) | The one number that measures your model |
+| Beam Search | [beam_search.md](explanations%20and%20examples%20WIP/beam_search.md) | Generate more accurate text with multiple candidates |
 | Cheatsheet | [cheatsheet.md](explanations%20and%20examples%20WIP/cheatsheet.md) | Every formula and hyperparameter in one place |
 | FAQ | [faq.md](explanations%20and%20examples%20WIP/faq.md) | Troubleshooting common problems |
 | Encoder vs Decoder | [encoder_decoder_architectures.md](explanations%20and%20examples%20WIP/encoder_decoder_architectures.md) | GPT vs BERT vs T5 explained |
@@ -293,7 +294,7 @@ Each chapter follows the same **4-step structure**:
 │   ├── 04_data_preparation.md
 │   ├── 05_full_finetune.md
 │   └── 📓 notebooks/lora_finetune.ipynb
-├── 📚 explanations and examples WIP/ ← Standalone explainers (27 topics)
+├── 📚 explanations and examples WIP/ ← Standalone explainers (28 topics)
 └── 📄 CONTRIBUTING.md
 ```
 
