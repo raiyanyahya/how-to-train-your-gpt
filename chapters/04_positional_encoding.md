@@ -31,7 +31,7 @@ x' = x*cos(θ) - y*sin(θ)
 y' = x*sin(θ) + y*cos(θ)
 ```
 
-RoPE does this for EVERY pair of dimensions in the query and key vectors. The rotation angle for position `p` and dimension pair `2i, 2i+1` is:
+RoPE groups the query and key dimensions into non-overlapping adjacent pairs: `(0, 1)`, `(2, 3)`, `(4, 5)`, and so on. It rotates each pair separately. The rotation angle for position `p` and dimension pair `2i, 2i+1` is:
 
 ```
 θ(p, i) = p / (10000^(2i/d_model))
