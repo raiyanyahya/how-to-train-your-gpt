@@ -126,7 +126,7 @@ source gpt_env/bin/activate          # Mac/Linux
 # gpt_env\Scripts\activate           # Windows
 
 # 3. Install dependencies (CPU version. For GPU see below)
-pip install torch tiktoken datasets numpy matplotlib --index-url https://download.pytorch.org/whl/cpu
+pip install torch tiktoken datasets numpy matplotlib --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Or use the requirements file
 pip install -r requirements.txt
