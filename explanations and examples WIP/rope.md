@@ -36,7 +36,7 @@ RoPE fixes both problems. It captures relative distance perfectly.
 Word five and word seven are always two steps apart no matter if
 they appear at the start or the middle of a long paragraph. And
 RoPE can handle any sentence length even if the model was trained
-on shorter ones. This is why LLaMA Mistral and Qwen all use RoPE.
+on shorter ones. This is why Llama, Mistral and Qwen all use RoPE.
 
 ## When was it invented
 
